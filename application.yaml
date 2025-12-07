@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: "https://mlflow.github.io/mlflow-helm/"
     chart: mlflow
-    targetRevision: 0.2.0   # версія чарту
+    targetRevision: 0.2.0
     helm:
       valueFiles:
         - values/mlflow-values.yaml
