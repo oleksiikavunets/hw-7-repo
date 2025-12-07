@@ -1,0 +1,61 @@
+# Minimal MLflow Helm deployment values
+
+# Application settings
+server:
+  image:
+    repository: mlflow/mlflow
+    tag: 2.9.1
+  service:
+    type: ClusterIP
+    port: 5000
+  env:
+    - name: MLFLOW_TRACKING_URI
+      value: sqlite:///mlflow.db
+    - name: BACKEND_STORE_URI
+      value: sqlite:///mlflow.db
+    - name: ARTIFACT_ROOT
+      value: s3://mlflow-artifacts
+
+# Artifact storage (using local MinIO for testing)
+minio:
+  enabled: true
+  accessKey: minio
+  secretKey: minio123
+  service:
+    type: ClusterIP
+    port: 9000
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: "standard"
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+# Database (SQLite for simplicity, for production use Postgres/MySQL)
+database:
+  type: sqlite
+  sqlite:
+    file: /mlflow/mlflow.db
+
+# Resources
+resources:
+  server:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  minio:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Replica counts
+replicaCount:
+  server: 1
+  minio: 1
